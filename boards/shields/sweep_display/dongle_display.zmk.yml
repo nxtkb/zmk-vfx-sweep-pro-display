@@ -1,0 +1,9 @@
+file_format: "1"
+id: sweep_display
+name: sweep_display
+type: shield
+url: https://github.com/lynnlee0522/zmk-vfx-widgets
+requires:
+- ssd16xx
+features:
+- display

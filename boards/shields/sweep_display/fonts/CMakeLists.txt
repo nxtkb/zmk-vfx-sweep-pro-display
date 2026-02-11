@@ -1,0 +1,4 @@
+target_sources_ifdef(CONFIG_ZMK_DISPLAY app PRIVATE font_18_big_john.c)
+target_sources_ifdef(CONFIG_ZMK_DISPLAY app PRIVATE font_14_zqk.c)
+target_sources_ifdef(CONFIG_ZMK_DISPLAY app PRIVATE font_14_roboto_extra_bold.c)
+target_sources_ifdef(CONFIG_ZMK_DISPLAY app PRIVATE font_12_roboto_extra_bold.c)
