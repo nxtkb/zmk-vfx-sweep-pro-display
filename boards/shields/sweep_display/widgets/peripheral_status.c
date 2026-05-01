@@ -10,10 +10,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #include "peripheral_status.h"
 #include <zmk/display.h>
-#include <zmk/event_manager.h>
-#include <zmk/events/split_central_peripheral_status_changed.h>
-#include <zmk/split/bluetooth/central.h>
-#include <zmk/split/bluetooth/peripheral.h>
+#include <zmk/split/transport/central.h>
+#include <zmk/split/transport/types.h>
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
@@ -21,26 +19,23 @@ LV_FONT_DECLARE(lv_custom_symbol);
 
 #define LV_SYMBOL_KEYBOARD_1 "\xEF\x84\x9C"
 
-struct peripheral_status_state {
-  bool connected;
-};
+extern const struct zmk_split_transport_central *active_transport;
 
-static struct peripheral_status_state get_state(const zmk_event_t *_eh) {
-  const struct zmk_split_central_peripheral_status_changed *ev =
-      as_zmk_split_central_peripheral_status_changed(_eh);
-
-  if (ev == NULL) {
-    return (struct peripheral_status_state){.connected = false};
+static bool peripheral_connected(void) {
+  if (active_transport == NULL || active_transport->api == NULL ||
+      active_transport->api->get_status == NULL) {
+    return false;
   }
 
-  return (struct peripheral_status_state){
-      .connected = ev->state == PERIPHERAL_SLOT_STATE_CONNECTED ? true : false};
+  struct zmk_split_transport_status status =
+      active_transport->api->get_status();
+  return status.enabled &&
+         status.connections != ZMK_SPLIT_TRANSPORT_CONNECTIONS_STATUS_DISCONNECTED;
 }
 
-static void set_status_symbol(lv_obj_t *label,
-                              struct peripheral_status_state state) {
+static void set_status_symbol(lv_obj_t *label, bool connected) {
   char text[64];
-  if (state.connected) {
+  if (connected) {
     snprintf(text, sizeof(text), "%s %s %s", LV_SYMBOL_KEYBOARD_1,
              LV_SYMBOL_MINUS, LV_SYMBOL_KEYBOARD_1);
   } else {
@@ -51,18 +46,20 @@ static void set_status_symbol(lv_obj_t *label,
   lv_label_set_text(label, text);
 }
 
-static void output_status_update_cb(struct peripheral_status_state state) {
+static void refresh_widgets(void) {
   struct zmk_widget_peripheral_status *widget;
   SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
-    set_status_symbol(widget->obj, state);
+    set_status_symbol(widget->obj, peripheral_connected());
   }
 }
 
-ZMK_DISPLAY_WIDGET_LISTENER(widget_peripheral_status,
-                            struct peripheral_status_state,
-                            output_status_update_cb, get_state)
-ZMK_SUBSCRIPTION(widget_peripheral_status,
-                 zmk_split_central_peripheral_status_changed);
+static void refresh_work_cb(struct k_work *work);
+K_WORK_DELAYABLE_DEFINE(refresh_work, refresh_work_cb);
+
+static void refresh_work_cb(struct k_work *work) {
+  refresh_widgets();
+  k_work_reschedule(&refresh_work, K_SECONDS(1));
+}
 
 int zmk_widget_peripheral_status_init(
     struct zmk_widget_peripheral_status *widget, lv_obj_t *parent) {
@@ -71,7 +68,8 @@ int zmk_widget_peripheral_status_init(
 
   sys_slist_append(&widgets, &widget->node);
 
-  widget_peripheral_status_init();
+  refresh_widgets();
+  k_work_reschedule(&refresh_work, K_NO_WAIT);
   return 0;
 }
 

@@ -25,7 +25,6 @@ LV_FONT_DECLARE(font_12_roboto_extra_bold);
 struct layer_status_state {
   zmk_keymap_layer_index_t index;
   const char *label;
-  struct zmk_keymap_layers_info info;
 };
 
 static void set_layer_symbol(lv_obj_t *label, struct layer_status_state state) {
@@ -47,35 +46,19 @@ static void set_layer_symbol(lv_obj_t *label, struct layer_status_state state) {
   }
 }
 
-void debug_print_layer_status_state(const struct layer_status_state *state) {
-  LOG_INF("当前层 index: %d, label: %s", state->index,
-          state->label ? state->label : "(none)");
-  LOG_INF("所有有效层:");
-  for (size_t i = 0; i < state->info.effective_layer_count; i++) {
-    const char *label = state->info.keymap_layers[i].label
-                            ? state->info.keymap_layers[i].label
-                            : "(none)";
-    zmk_keymap_layer_id_t id = state->info.keymap_layers[i].id;
-    LOG_INF("  Layer %d: %s", id, label);
-  }
-}
-
 static void layer_status_update_cb(struct layer_status_state state) {
   struct zmk_widget_layer_status *widget;
   SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
-    // debug_print_layer_status_state(&state);
     set_layer_symbol(widget->obj, state);
   }
 }
 
 static struct layer_status_state layer_status_get_state(const zmk_event_t *eh) {
   zmk_keymap_layer_index_t index = zmk_keymap_highest_layer_active();
-  struct zmk_keymap_layers_info info = zmk_keymap_get_all_layers_info();
 
   return (struct layer_status_state){
       .index = index,
-      .label = zmk_keymap_layer_name(zmk_keymap_layer_index_to_id(index)),
-      .info = info};
+      .label = zmk_keymap_layer_name(zmk_keymap_layer_index_to_id(index))};
 }
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state,
