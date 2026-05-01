@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+#include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
@@ -30,7 +31,7 @@ struct layer_status_state {
 static void set_layer_symbol(lv_obj_t *label, struct layer_status_state state) {
 
   if (state.label == NULL || strlen(state.label) == 0) {
-    char text[10] = {};
+    char text[16] = {};
     snprintf(text, sizeof(text), "layer : %i", state.index);
     lv_label_set_text(label, text);
   } else {

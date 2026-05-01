@@ -1,0 +1,39 @@
+if SHIELD_SWEEP_DISPLAY
+
+choice ZMK_DISPLAY_STATUS_SCREEN
+    default ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+endchoice
+
+choice ZMK_DISPLAY_WORK_QUEUE
+    default ZMK_DISPLAY_WORK_QUEUE_DEDICATED
+endchoice
+
+choice LV_COLOR_DEPTH
+    default LV_COLOR_DEPTH_1
+endchoice
+
+config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
+    select LV_USE_LABEL
+    select LV_USE_IMAGE
+    select LV_USE_FLEX
+    imply LV_USE_THEME_MONO if LV_Z_BITS_PER_PIXEL=1
+    imply ZMK_WIDGET_BATTERY_STATUS
+    imply ZMK_WIDGET_LAYER_STATUS
+    imply ZMK_WIDGET_OUTPUT_STATUS
+    imply ZMK_WIDGET_PERIPHERAL_STATUS
+    imply ZMK_WIDGET_WPM_STATUS
+    imply ZMK_WIDGET_INDICATORS_STATUS
+
+config LV_Z_MEM_POOL_SIZE
+    default 81920
+
+config LV_Z_VDB_SIZE
+    default 10
+
+config LV_DPI_DEF
+    default 130
+
+config LV_Z_BITS_PER_PIXEL
+    default 1
+
+endif

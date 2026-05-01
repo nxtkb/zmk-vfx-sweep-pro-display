@@ -17,6 +17,8 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
+LV_FONT_DECLARE(lv_custom_symbol);
+
 #define LV_SYMBOL_KEYBOARD_1 "\xEF\x84\x9C"
 
 struct peripheral_status_state {
@@ -24,13 +26,13 @@ struct peripheral_status_state {
 };
 
 static struct peripheral_status_state get_state(const zmk_event_t *_eh) {
-  // 将eh转化为peripheral_status_state
   const struct zmk_split_central_peripheral_status_changed *ev =
       as_zmk_split_central_peripheral_status_changed(_eh);
 
-  // 打印出ev的source和state
-  // LOG_ERR("Peripheral status changed: source=%d, state=%d", ev->source,
-  // ev->state);
+  if (ev == NULL) {
+    return (struct peripheral_status_state){.connected = false};
+  }
+
   return (struct peripheral_status_state){
       .connected = ev->state == PERIPHERAL_SLOT_STATE_CONNECTED ? true : false};
 }
@@ -65,6 +67,7 @@ ZMK_SUBSCRIPTION(widget_peripheral_status,
 int zmk_widget_peripheral_status_init(
     struct zmk_widget_peripheral_status *widget, lv_obj_t *parent) {
   widget->obj = lv_label_create(parent);
+  lv_obj_set_style_text_font(widget->obj, &lv_custom_symbol, LV_PART_MAIN);
 
   sys_slist_append(&widgets, &widget->node);
 

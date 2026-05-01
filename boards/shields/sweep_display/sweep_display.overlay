@@ -1,0 +1,7 @@
+/*
+ * This shield only provides the custom ZMK status screen UI.
+ *
+ * Keep the display hardware definition in the keyboard shield overlay, e.g.
+ * Sweep-Pro's sweep_left.overlay. Defining the SSD1680/MIPI DBI node here as
+ * well would conflict when building with SHIELD="sweep_left sweep_display".
+ */

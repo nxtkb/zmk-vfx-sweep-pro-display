@@ -1,6 +1,0 @@
----
-include:
-- board: xiao_ble
-  shield: rommana_dongle dongle_display
-- board: xiao_ble
-  shield: sweep_dongle dongle_display

@@ -2,4 +2,5 @@ name: zmk-vfx-widgets
 build:
   cmake: ./boards/shields/sweep_display
   settings:
+    board_root: .
     dts_root: .

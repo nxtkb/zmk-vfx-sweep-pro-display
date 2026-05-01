@@ -34,10 +34,9 @@ struct output_status_state {
 
 static struct output_status_state get_state(const zmk_event_t *_eh) {
   return (struct output_status_state){
-      .selected_endpoint = zmk_endpoints_selected(),
+      .selected_endpoint = zmk_endpoint_get_selected(),
       .active_profile_connected = zmk_ble_active_profile_is_connected(),
       .active_profile_bonded = !zmk_ble_active_profile_is_open()};
-  ;
 }
 
 static void set_status_symbol(lv_obj_t *label,
@@ -69,6 +68,9 @@ static void set_status_symbol(lv_obj_t *label,
                LV_SYMBOL_BLUETOOTH_1 " %i " LV_SYMBOL_UNLOCK,
                state.selected_endpoint.ble.profile_index + 1);
     }
+    break;
+  case ZMK_TRANSPORT_NONE:
+    snprintf(text, sizeof(text), LV_SYMBOL_CLOSE);
     break;
   }
 
