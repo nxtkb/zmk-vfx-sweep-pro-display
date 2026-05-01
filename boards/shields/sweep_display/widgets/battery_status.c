@@ -22,6 +22,20 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
+static inline const char *get_battery_symbol(uint8_t level) {
+  if (level > 95) {
+    return LV_SYMBOL_BATTERY_FULL;
+  } else if (level > 65) {
+    return LV_SYMBOL_BATTERY_3;
+  } else if (level > 35) {
+    return LV_SYMBOL_BATTERY_2;
+  } else if (level > 5) {
+    return LV_SYMBOL_BATTERY_1;
+  } else {
+    return LV_SYMBOL_BATTERY_EMPTY;
+  }
+}
+
 struct battery_status_state {
   bool is_peripheral; // 是否是外设电池状态
   uint8_t source;
@@ -42,7 +56,7 @@ static void set_battery_symbol(lv_obj_t *label,
                                struct battery_status_state state) {
   // 展示battery_objects的状态
   char text[64] = {};
-  char one[16];
+  int len = 0;
 
   for (int i = 0;
        i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT + ZMK_SPLIT_CENTRAL_COUNT; i++) {
@@ -54,30 +68,19 @@ static void set_battery_symbol(lv_obj_t *label,
 
     uint8_t level = state.level;
 
-    // 根据电量设置不同颜色和符号
-    if (level > 95) {
-      snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_FULL); // 绿色
-    } else if (level > 65) {
-      snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_3); // 黄绿色
-    } else if (level > 35) {
-      snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_2); // 黄色
-    } else if (level > 5) {
-      snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_1); // 橙色
-    } else {
-      snprintf(one, sizeof(one), "%s", LV_SYMBOL_BATTERY_EMPTY); // 红色
-    }
-    strcat(text, one);
+    len += snprintf(text + len, sizeof(text) - len, "%s %u%%",
+                    get_battery_symbol(level), level);
 
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
     if (state.usb_present) {
-      strcat(text, " ");
-      strcat(text, LV_SYMBOL_CHARGE); // 充电符号
+      len +=
+          snprintf(text + len, sizeof(text) - len, " %s", LV_SYMBOL_CHARGE);
     }
 #endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
 
     // 换行
     if (i < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT) {
-      strcat(text, "\n");
+      len += snprintf(text + len, sizeof(text) - len, "\n");
     }
   }
 
@@ -146,7 +149,7 @@ int zmk_widget_battery_status_init(struct zmk_widget_battery_status *widget,
                                    lv_obj_t *parent) {
   widget->obj = lv_label_create(parent);
   // 设置text的字体
-  lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_16, LV_PART_MAIN);
+  lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_14, LV_PART_MAIN);
   sys_slist_append(&widgets, &widget->node);
   widget_battery_status_init();
   return 0;
