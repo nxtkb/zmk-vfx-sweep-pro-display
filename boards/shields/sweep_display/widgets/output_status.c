@@ -48,30 +48,29 @@ static void set_status_symbol(lv_obj_t *label,
   case ZMK_TRANSPORT_USB:
     snprintf(text, sizeof(text), LV_SYMBOL_USB);
     break;
-  case ZMK_TRANSPORT_BLE:
+  case ZMK_TRANSPORT_NONE:
+  case ZMK_TRANSPORT_BLE: {
+    int idx = zmk_ble_active_profile_index();
+
     if (state.active_profile_bonded) {
       if (state.active_profile_connected) {
         // 已配对且已连接
         snprintf(text, sizeof(text),
-                 LV_SYMBOL_BLUETOOTH_1 " %i " LV_SYMBOL_LOCK " " LV_SYMBOL_OK,
-                 state.selected_endpoint.ble.profile_index + 1);
+                 LV_SYMBOL_BLUETOOTH_1 " %i  " LV_SYMBOL_OK, idx + 1);
       } else {
         // 已配对但未连接
         snprintf(text, sizeof(text),
                  LV_SYMBOL_BLUETOOTH_1 " %i " LV_SYMBOL_LOCK
                                        " " LV_SYMBOL_CLOSE,
-                 state.selected_endpoint.ble.profile_index + 1);
+                 idx + 1);
       }
     } else {
       // 未配对
       snprintf(text, sizeof(text),
-               LV_SYMBOL_BLUETOOTH_1 " %i " LV_SYMBOL_UNLOCK,
-               state.selected_endpoint.ble.profile_index + 1);
+               LV_SYMBOL_BLUETOOTH_1 " %i " LV_SYMBOL_UNLOCK, idx + 1);
     }
     break;
-  case ZMK_TRANSPORT_NONE:
-    snprintf(text, sizeof(text), LV_SYMBOL_CLOSE);
-    break;
+  }
   }
 
   // 设置text的颜色为白色，字体大小为22
