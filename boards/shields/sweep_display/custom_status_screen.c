@@ -15,6 +15,7 @@
 #include "widgets/logo.h"
 #include "widgets/output_status.h"
 #include "widgets/peripheral_status.h"
+#include "widgets/trackpad_status.h"
 #include "widgets/wpm_status.h"
 
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -35,6 +36,10 @@ static struct zmk_widget_peripheral_status peripheral_status_widget;
 
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_LAYER_STATUS)
 static struct zmk_widget_layer_status layer_status_widget;
+#endif
+
+#if IS_ENABLED(CONFIG_CUSTOM_WIDGET_TRACKPAD_STATUS)
+static struct zmk_widget_trackpad_status trackpad_status_widget;
 #endif
 
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_WPM_STATUS)
@@ -58,8 +63,18 @@ static void set_epaper_screen_style(lv_obj_t *obj) {
   lv_obj_set_style_pad_all(obj, 0, LV_PART_MAIN);
 }
 
+static bool is_epaper_fill_bar(lv_obj_t *obj) {
+  return lv_obj_get_child_count(obj) == 0 && lv_obj_get_width(obj) >= 8 &&
+         lv_obj_get_height(obj) <= 2;
+}
+
 static void set_epaper_widget_style(lv_obj_t *obj) {
-  lv_obj_set_style_bg_opa(obj, LV_OPA_TRANSP, LV_PART_MAIN);
+  if (is_epaper_fill_bar(obj)) {
+    lv_obj_set_style_bg_color(obj, lv_color_black(), LV_PART_MAIN);
+    lv_obj_set_style_bg_opa(obj, LV_OPA_COVER, LV_PART_MAIN);
+  } else {
+    lv_obj_set_style_bg_opa(obj, LV_OPA_TRANSP, LV_PART_MAIN);
+  }
   lv_obj_set_style_text_color(obj, lv_color_black(), LV_PART_MAIN);
   lv_obj_set_style_text_opa(obj, LV_OPA_COVER, LV_PART_MAIN);
   lv_obj_set_style_border_width(obj, 0, LV_PART_MAIN);
@@ -80,8 +95,9 @@ lv_obj_t *zmk_display_status_screen() {
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_OUTPUT_STATUS)
   zmk_widget_output_status_init(&output_status_widget, screen);
   set_epaper_widget_style(zmk_widget_output_status_obj(&output_status_widget));
-  lv_obj_set_style_text_font(zmk_widget_output_status_obj(&output_status_widget),
-                             &lv_custom_symbol, LV_PART_MAIN);
+  lv_obj_set_style_text_font(
+      zmk_widget_output_status_obj(&output_status_widget), &lv_custom_symbol,
+      LV_PART_MAIN);
   lv_obj_align(zmk_widget_output_status_obj(&output_status_widget),
                LV_ALIGN_TOP_LEFT, 0, 0);
 #endif
@@ -112,20 +128,29 @@ lv_obj_t *zmk_display_status_screen() {
   zmk_widget_kbd_name_init(&kbd_name_widget, screen);
   set_epaper_widget_style(zmk_widget_kbd_name_obj(&kbd_name_widget));
   lv_obj_align(zmk_widget_kbd_name_obj(&kbd_name_widget), LV_ALIGN_TOP_MID, 0,
-               94);
+               96);
+
+#if IS_ENABLED(CONFIG_CUSTOM_WIDGET_TRACKPAD_STATUS)
+  zmk_widget_trackpad_status_init(&trackpad_status_widget, screen);
+  set_epaper_widget_style(
+      zmk_widget_trackpad_status_obj(&trackpad_status_widget));
+  lv_obj_align(zmk_widget_trackpad_status_obj(&trackpad_status_widget),
+               LV_ALIGN_TOP_MID, 0, 116);
+#endif
 
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_LAYER_STATUS)
   zmk_widget_layer_status_init(&layer_status_widget, screen);
   set_epaper_widget_style(zmk_widget_layer_status_obj(&layer_status_widget));
   lv_obj_align(zmk_widget_layer_status_obj(&layer_status_widget),
-               LV_ALIGN_TOP_MID, 0, 116);
+               LV_ALIGN_BOTTOM_LEFT, 0, 0);
 #endif
 
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_WPM_STATUS)
   zmk_widget_wpm_status_init(&wpm_status_widget, screen);
   set_epaper_widget_style(zmk_widget_wpm_status_obj(&wpm_status_widget));
   lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget),
-               LV_ALIGN_BOTTOM_LEFT, 0, 0);
+               LV_ALIGN_BOTTOM_LEFT, 0,
+               IS_ENABLED(CONFIG_CUSTOM_WIDGET_LAYER_STATUS) ? -14 : 0);
 #endif
 
 #if IS_ENABLED(CONFIG_CUSTOM_WIDGET_INDICATORS_STATUS)

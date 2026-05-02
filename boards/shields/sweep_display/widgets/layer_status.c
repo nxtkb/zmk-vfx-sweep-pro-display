@@ -20,8 +20,6 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL); // 使用完整路径
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
-LV_FONT_DECLARE(font_12_roboto_extra_bold);
-
 struct layer_status_state {
   zmk_keymap_layer_index_t index;
   const char *label;
@@ -31,15 +29,14 @@ static void set_layer_symbol(lv_obj_t *label, struct layer_status_state state) {
 
   if (state.label == NULL || strlen(state.label) == 0) {
     char text[16] = {};
-    snprintf(text, sizeof(text), "layer : %i", state.index);
+    snprintf(text, sizeof(text), "%i", state.index);
     lv_label_set_text(label, text);
   } else {
     char text[20] = {};
-    // 判断如果state.label的长度大于15，则只显示前15个字符
-    if (strlen(state.label) > 10) {
-      snprintf(text, sizeof(text), "layer : %.10s", state.label);
+    if (strlen(state.label) > 18) {
+      snprintf(text, sizeof(text), "%.18s", state.label);
     } else {
-      snprintf(text, sizeof(text), "layer : %s", state.label);
+      snprintf(text, sizeof(text), "%s", state.label);
     }
 
     lv_label_set_text(label, text);
@@ -69,8 +66,7 @@ ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 int zmk_widget_layer_status_init(struct zmk_widget_layer_status *widget,
                                  lv_obj_t *parent) {
   widget->obj = lv_label_create(parent);
-  // 设置字体的大小
-  lv_obj_set_style_text_font(widget->obj, &font_12_roboto_extra_bold,
+  lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_12,
                              LV_PART_MAIN | LV_STATE_DEFAULT);
 
   sys_slist_append(&widgets, &widget->node);

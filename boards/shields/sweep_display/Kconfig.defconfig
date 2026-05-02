@@ -32,6 +32,14 @@ config CUSTOM_WIDGET_LAYER_STATUS
     depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
     select LV_USE_LABEL
 
+config CUSTOM_WIDGET_TRACKPAD_STATUS
+    bool "Sweep Pro custom trackpad status widget"
+    depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
+    select LV_USE_LABEL
+    help
+      Enable the optional Cirque trackpad status row. This requires the
+      cirque-input-module to be present in ZMK_EXTRA_MODULES.
+
 config CUSTOM_WIDGET_OUTPUT_STATUS
     bool "Sweep Pro custom output status widget"
     depends on BT && (!ZMK_SPLIT_BLE || ZMK_SPLIT_ROLE_CENTRAL)
