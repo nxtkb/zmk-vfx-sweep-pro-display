@@ -12,6 +12,9 @@
 struct zmk_widget_trackpad_status {
   sys_snode_t node;
   lv_obj_t *obj;
+  lv_obj_t *mode_label;
+  lv_obj_t *pointer_speed_label;
+  lv_obj_t *scroll_speed_label;
 };
 
 int zmk_widget_trackpad_status_init(struct zmk_widget_trackpad_status *widget,
