@@ -1,0 +1,19 @@
+name: Build display integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: nxtkb/zmk-feature-codex-micro/.github/workflows/build-user-config.yml@034050c6cac7834b5004aad510863e7c999f6307
+    with:
+      build_matrix_path: ci/build.yaml
+      config_path: ci/config
+      zmk_config_path: Sweep-Pro/config
+      archive_name: sweep-pro-display-test-firmware

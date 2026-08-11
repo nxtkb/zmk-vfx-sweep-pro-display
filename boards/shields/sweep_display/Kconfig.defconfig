@@ -19,6 +19,7 @@ config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
     imply LV_USE_THEME_MONO if LV_Z_BITS_PER_PIXEL=1
     imply CUSTOM_WIDGET_BATTERY_STATUS
     imply CUSTOM_WIDGET_LAYER_STATUS
+    imply CUSTOM_WIDGET_CODEX_STATUS
     imply CUSTOM_WIDGET_OUTPUT_STATUS
     imply CUSTOM_WIDGET_PERIPHERAL_STATUS
     imply CUSTOM_WIDGET_INDICATORS_STATUS
@@ -32,6 +33,17 @@ config CUSTOM_WIDGET_LAYER_STATUS
     depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
     select LV_USE_LABEL
 
+config CUSTOM_WIDGET_CODEX_STATUS
+    bool "Sweep Pro Codex Agent status widget"
+    depends on NXTKB_CODEX_MICRO
+    depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
+    select LV_USE_LABEL
+    help
+      Show Codex Agent state on the auxiliary status row. This option is
+      independent from the Codex transport and key behaviors: set
+      CONFIG_CUSTOM_WIDGET_CODEX_STATUS=n to keep Codex controls enabled while
+      hiding the display widget.
+
 config CUSTOM_WIDGET_TRACKPAD_STATUS
     bool "Sweep Pro custom trackpad status widget"
     depends on !ZMK_SPLIT || ZMK_SPLIT_ROLE_CENTRAL
@@ -39,6 +51,48 @@ config CUSTOM_WIDGET_TRACKPAD_STATUS
     help
       Enable the optional Cirque trackpad status row. This requires the
       cirque-input-module to be present in ZMK_EXTRA_MODULES.
+
+config CUSTOM_WIDGET_AUX_STATUS_LAYOUT
+    bool
+    default y if CUSTOM_WIDGET_CODEX_STATUS || CUSTOM_WIDGET_TRACKPAD_STATUS
+    help
+      Internal layout controller shared by the optional Codex and trackpad
+      status rows. It is omitted when both widgets are disabled.
+
+choice CUSTOM_AUX_STATUS_DEFAULT_MODE
+    prompt "Auxiliary status shown on base layers"
+    default CUSTOM_AUX_STATUS_DEFAULT_CODEX if CUSTOM_WIDGET_CODEX_STATUS
+    default CUSTOM_AUX_STATUS_DEFAULT_TRACKPAD if CUSTOM_WIDGET_TRACKPAD_STATUS
+    default CUSTOM_AUX_STATUS_DEFAULT_NONE
+
+config CUSTOM_AUX_STATUS_DEFAULT_NONE
+    bool "Hidden"
+
+config CUSTOM_AUX_STATUS_DEFAULT_CODEX
+    bool "Codex Agent status"
+    depends on CUSTOM_WIDGET_CODEX_STATUS
+
+config CUSTOM_AUX_STATUS_DEFAULT_TRACKPAD
+    bool "Trackpad status"
+    depends on CUSTOM_WIDGET_TRACKPAD_STATUS
+
+config CUSTOM_AUX_STATUS_DEFAULT_BOTH
+    bool "Codex and trackpad status"
+    depends on CUSTOM_WIDGET_CODEX_STATUS && CUSTOM_WIDGET_TRACKPAD_STATUS
+
+endchoice
+
+config CUSTOM_AUX_STATUS_BASE_LAYER_MAX
+    int
+    default 1
+
+config CUSTOM_AUX_STATUS_MOUSE_LAYER_INDEX
+    int
+    default 5
+
+config CUSTOM_AUX_STATUS_CODEX_LAYER_INDEX
+    int
+    default 6
 
 config CUSTOM_WIDGET_OUTPUT_STATUS
     bool "Sweep Pro custom output status widget"

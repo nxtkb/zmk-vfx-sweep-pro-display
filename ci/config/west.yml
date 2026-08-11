@@ -1,0 +1,26 @@
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: nxtkb
+      url-base: https://github.com/nxtkb
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: cb615aee9a7c427e251f2ab62080c1a44a165da9
+      import: app/west.yml
+    - name: Sweep-Pro
+      remote: nxtkb
+      revision: 286767a76b2317af6ee8eaca03b4755124d42963
+    - name: zmk-feature-codex-micro
+      remote: nxtkb
+      revision: 034050c6cac7834b5004aad510863e7c999f6307
+    - name: zmk-behavior-report
+      remote: nxtkb
+      revision: 476f43da1f98b4a6150c9c0e499a257bd64a29a0
+      import: west.yml
+    - name: cirque-input-module
+      remote: nxtkb
+      revision: 8af03a4c061580c14ec8745caf0fa2dd3fc7f042
+  self:
+    path: config

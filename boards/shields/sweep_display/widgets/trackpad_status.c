@@ -26,8 +26,8 @@ LV_FONT_DECLARE(lv_custom_symbol);
 
 #define TRACKPAD_STATUS_UPDATE_DELAY_MS 250
 #define TRACKPAD_STATUS_WIDTH 152
-#define TRACKPAD_STATUS_HEIGHT 14
-#define TRACKPAD_STATUS_LABEL_HEIGHT 14
+#define TRACKPAD_STATUS_HEIGHT 12
+#define TRACKPAD_STATUS_LABEL_HEIGHT 12
 #define TRACKPAD_STATUS_POINTER_VALUE_WIDTH 36
 #define TRACKPAD_STATUS_SCROLL_VALUE_WIDTH 44
 #define LV_SYMBOL_CUSTOM_MOUSE "\xEF\xA3\x8C"
@@ -168,16 +168,16 @@ int zmk_widget_trackpad_status_init(struct zmk_widget_trackpad_status *widget,
 
   create_label(widget->obj, LV_SYMBOL_CUSTOM_MOUSE, 0, 14, &lv_custom_symbol);
   widget->mode_label = create_label(widget->obj, "-", 17, 8,
-                                    &lv_font_montserrat_12);
-  create_label(widget->obj, "P", 30, 8, &lv_font_montserrat_12);
+                                    &lv_font_montserrat_10);
+  create_label(widget->obj, "P", 30, 8, &lv_font_montserrat_10);
   widget->pointer_speed_label =
       create_label(widget->obj, "1.00x", 39,
                    TRACKPAD_STATUS_POINTER_VALUE_WIDTH,
-                   &lv_font_montserrat_12);
-  create_label(widget->obj, "S", 78, 8, &lv_font_montserrat_12);
+                   &lv_font_montserrat_10);
+  create_label(widget->obj, "S", 78, 8, &lv_font_montserrat_10);
   widget->scroll_speed_label =
       create_label(widget->obj, "1.00x", 87,
-                   TRACKPAD_STATUS_SCROLL_VALUE_WIDTH, &lv_font_montserrat_12);
+                   TRACKPAD_STATUS_SCROLL_VALUE_WIDTH, &lv_font_montserrat_10);
 
   sys_slist_append(&widgets, &widget->node);
 

@@ -1,11 +1,32 @@
-# ZMK Module Template
+# Sweep Pro display module
 
-This repository contains a template for a ZMK module, as it would most frequently be used. 
+This ZMK module provides the e-ink status screen used by NXTKB Sweep Pro. It
+contains the display shield, standard keyboard status widgets, optional Cirque
+trackpad status, and optional Codex Agent status.
 
-## Usage
+## Optional Codex widget
 
-Read through the [ZMK Module Creation](https://zmk.dev/docs/development/module-creation) page for details on how to configure this template.
+The Codex display widget is independent from the Codex transport and key
+behaviors. It is enabled by default when `CONFIG_NXTKB_CODEX_MICRO=y`, but a
+keyboard can keep all Codex controls and hide only the display widget:
 
-## More Info
+```conf
+CONFIG_CUSTOM_WIDGET_CODEX_STATUS=n
+```
 
-For more info on modules, you can read through  through the [Zephyr modules page](https://docs.zephyrproject.org/3.5.0/develop/modules.html) and [ZMK's page on using modules](https://zmk.dev/docs/features/modules). [Zephyr's west manifest page](https://docs.zephyrproject.org/3.5.0/develop/west/manifest.html#west-manifests) may also be of use.
+`widgets/aux_status_layout.c` is a layout controller shared by the optional
+Codex and trackpad rows; it is not itself a visible widget. Each visible row is
+created only when its own Kconfig option is enabled, and the controller is
+omitted entirely when both rows are disabled.
+
+## Integration CI
+
+The checked-in `ci/` directory is the production integration fixture for this
+module. It pins known Sweep Pro, ZMK, and Codex revisions and builds:
+
+- the ordinary display;
+- the display with Codex Agent status;
+- Codex firmware with the Agent status widget explicitly disabled.
+
+This verifies both the standalone display path and the optional-widget boundary
+before changes are merged.
