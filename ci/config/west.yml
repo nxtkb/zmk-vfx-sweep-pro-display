@@ -7,14 +7,14 @@ manifest:
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: cb615aee9a7c427e251f2ab62080c1a44a165da9
+      revision: 4de313367288aad5aeaa1243890e40dc813f7008
       import: app/west.yml
     - name: Sweep-Pro
       remote: nxtkb
-      revision: 286767a76b2317af6ee8eaca03b4755124d42963
+      revision: 9bf146cafbde166aef42b2a6f4ba3f7c1acd8a84
     - name: zmk-feature-codex-micro
       remote: nxtkb
-      revision: 034050c6cac7834b5004aad510863e7c999f6307
+      revision: c53c81697e72ade603e84e7f3c8c5e43a04ddf4c
     - name: zmk-behavior-report
       remote: nxtkb
       revision: 476f43da1f98b4a6150c9c0e499a257bd64a29a0

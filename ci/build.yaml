@@ -3,13 +3,23 @@ include:
   - board: nice_nano//zmk
     shield: sweep_left sweep_left_display_hw sweep_display
     snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_SPLIT_PERIPHERAL_USB_POWER=y
     artifact-name: sweep_left_display
   - board: nice_nano//zmk
     shield: sweep_left sweep_left_display_hw sweep_display
     snippet: studio-rpc-usb-uart nxtkb-codex-micro-usb nxtkb-codex-micro-ble
+    cmake-args: -DCONFIG_ZMK_SPLIT_PERIPHERAL_USB_POWER=y
     artifact-name: sweep_left_display_codex
   - board: nice_nano//zmk
     shield: sweep_left sweep_left_display_hw sweep_display
     snippet: studio-rpc-usb-uart nxtkb-codex-micro-usb nxtkb-codex-micro-ble
-    cmake-args: -DCONFIG_CUSTOM_WIDGET_CODEX_STATUS=n
+    cmake-args: -DCONFIG_CUSTOM_WIDGET_CODEX_STATUS=n -DCONFIG_ZMK_SPLIT_PERIPHERAL_USB_POWER=y
     artifact-name: sweep_left_display_codex_widget_off
+  - board: nice_nano//zmk
+    shield: sweep_right
+    cmake-args: -DCONFIG_ZMK_SPLIT_PERIPHERAL_USB_POWER=y
+    artifact-name: sweep_right_usb_power
+  - board: nice_nano//zmk
+    shield: sweep_right sweep_right_trackpad
+    cmake-args: -DCONFIG_ZMK_SPLIT_PERIPHERAL_USB_POWER=y
+    artifact-name: sweep_right_trackpad_usb_power
