@@ -11,9 +11,12 @@ permissions:
 
 jobs:
   build:
-    uses: nxtkb/zmk-feature-codex-micro/.github/workflows/build-user-config.yml@034050c6cac7834b5004aad510863e7c999f6307
+    uses: nxtkb/zmk-feature-codex-micro/.github/workflows/build-user-config.yml@c53c81697e72ade603e84e7f3c8c5e43a04ddf4c
     with:
       build_matrix_path: ci/build.yaml
       config_path: ci/config
       zmk_config_path: Sweep-Pro/config
       archive_name: sweep-pro-display-test-firmware
+      patch_modules: |
+        zmk-feature-codex-micro
+        .

@@ -1,0 +1,14 @@
+patches:
+  - path: zmk/zmk-split-peripheral-usb-power.patch
+    sha256sum: fde7b0c6d03575af6201d9f143f03d997f618be5e5a7197aaf95b4f5bb7069de
+    module: zmk
+    author: k4i
+    email: sky_io@outlook.com
+    date: 2026-08-30
+    upstreamable: true
+    apply-command: git apply
+    comments: |
+      Forward peripheral USB power state to the central over the split
+      transport so the display can show USB power for both keyboard halves.
+      Enable CONFIG_ZMK_SPLIT_PERIPHERAL_USB_POWER on both halves.
+      Remove this patch when equivalent support is available upstream.
